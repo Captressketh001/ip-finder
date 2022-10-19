@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap');
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Rubik', sans-serif;
+    /* font-size: 18px; */
+}
+body{
+    margin: 0 auto;
+}
+header{
+    width: 100%;
+    height: 625px;
+    display: flex;
+    flex-direction: column;
+    /* background-color: red; */
+}
+.address-container{
+    height: 280px;
+    background: url(/images/pattern-bg.png);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    position: relative;
+    z-index: 1;
+    /* top: 64px; */
+}
+.title{
+    color: #fff;
+    margin-bottom: 46px;
+    margin-top: 15px;
+}
+.address-search{
+    width: 60%;
+    display: flex;
+    height: 60px;
+    justify-content: center;
+    /* align-items: center; */
+}
+.address-search input{
+    width: 60%;
+    height: 45px;
+    outline: none;
+    border: none;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.address-search input[type=text i]{
+    padding-left: 25px;
+}
+.address-search button{
+    height: 45px;
+    width: 50px;
+    background-color: #000;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+}
+.address-info{
+    display: flex;
+    width: 80%;
+    justify-content: space-around;
+    align-items: center;
+    height: 140px;
+    background-color: #fff;
+    border-radius: 10px;
+    position: relative;
+    top: 24%;
+    padding: 20px 1px;
+}
+.address-info div p{
+    margin-bottom: 1.2rem;
+    letter-spacing: 2px;
+}
+.address-info div:nth-child(n+2){
+    border-left: 1px solid black;
+    padding-left: 2pc;
+}
+@media screen and (max-width: 920px){
+    .address-info{
+        flex-direction: column;
+        height: 500px;
+        text-align: center;
+    }
+    .address-info div{
+        margin: 15px 0px;
+    }
+    .address-info div p, .address-info div h2{
+        font-size: 12px
+    }
+    .address-info div p{
+        margin-bottom: 0;
+    }
+    .address-info div:nth-child(n+2){
+        border-left: 0;
+        padding-left: 0;
+    }
+    .title{
+        margin-top: 90px;
+        margin-bottom: 8px;
+    }
+    .address-search{
+        width: 80%;
+    }
+    .address-search input{
+        width: 100%;
+    }
+}
+/* @media screen and (max-width: 365px) {
+    .address-info{
+        width: 70%
+    }
+} */
