@@ -12,39 +12,38 @@
         <div class="address-info" v-if="loading">
           <h2>Loading...</h2>
         </div>
-        <div class="address-info" v-else-if="!loading && responses.ip">
+        <div class="address-info" v-if="!loading && responses">
           <div>
             <p>IP ADDRESS</p>
-            <h2>{{responses ? responses.ip: 'N/A'}}</h2>
-            <b>{{responses.code}}</b>
+            <h2>{{responses.ip}}</h2>
           </div>
           <div>
             <p>LOCATION</p>
-            <h2>{{responses ? responses.location.city: 'N/A'}}, {{responses ? responses.location.region: 'N/A'}}</h2>
+            <h2>{{responses.city}}, {{responses.region}}</h2>
           </div>
           <div>
             <p>TIMEZONE</p>
-            <h2>UTC{{responses ? responses.location.timezone : 'N/A'}}</h2>
+            <h2>UTC{{responses.timezone}}</h2>
           </div>
           <div>
             <p>ISP</p>
-            <h2>{{responses ? responses.isp : 'N/A'}}</h2>
+            <h2>{{responses.isp}}</h2>
           </div>
         </div>
-        <div class="address-info" v-else>
+        <div class="address-info" v-if="!loading && !responses" >
           <h2>Not found. Input correct IPv4 or IPv6 address.</h2>
         </div>
       </div>
-      <div>
-        <l-map style="height:600px; z-index: -1;" :zoom="zoom" :center="center">
+      <div style="height:600px; z-index: -1;" id="map">
+        <!-- <l-map :zoom="zoom" :center="center">
           <l-tile-layer :url="url" :attribution="attribution">
-             <!-- <l-geo-json :geojson="geojson" :lat-lng="withPopup"/> -->
+             <l-geo-json :geojson="geojson" :lat-lng="withPopup"/>
           </l-tile-layer>
          <l-marker :lat-lng="withPopup">
        
           </l-marker>
-           <!-- <img src="/images/icon-location.svg" alt="" srcset="" :lat-lng="withPopup"> -->
-        </l-map>
+           <img src="/images/icon-location.svg" alt="" srcset="" :lat-lng="withPopup">
+        </l-map> -->
       </div>
     </header>
     </div>
@@ -52,15 +51,15 @@
 
 <script>
 import "leaflet/dist/leaflet.css"
-import { latLng } from "leaflet";
-import { LMap, LTileLayer, LMarker} from "@vue-leaflet/vue-leaflet";
+import leaflet from "leaflet";
+// import { LMap, LTileLayer, LMarker} from "@vue-leaflet/vue-leaflet";
 export default {
   name: 'App',
-  components: {
-    LMap,
-    LTileLayer,
-    LMarker
-  }, 
+  // components: {
+  //   LMap,
+  //   LTileLayer,
+  //   LMarker
+  // }, 
   data() {
     return {
       latitude:'',
@@ -106,16 +105,51 @@ export default {
       try{
         this.loading = true;
         const response = await fetch('https://geo.ipify.org/api/v2/country,city?apiKey=at_PDpgwRUasMPnp5TsmfLjPLx6Nwta0&ipAddress='+ this.address);
-        this.responses = await response.json();
-        this.center[0] = this.responses.location.lat
-        this.center[1] = this.responses.location.lng
-        this.latitude = parseFloat(this.responses.location.lat)
-        this.longitude = parseFloat(this.responses.location.lng)
-        this.withPopup = latLng(6.45407, 3.39467)
-        console.log(this.withPopup)
+        const res = await response.json();
+        this.responses = {
+          ip: res.ip,
+          city: res.location.city,
+          region: res.location.region,
+          timezone: res.location.timezone,
+          isp: res.isp,
+          lat: res.location.lat,
+          lng: res.location.lng
+        }
+        this.center[0] = this.responses.lat
+        this.center[1] = this.responses.lng
+        this.latitude = parseFloat(this.responses.lat)
+        this.longitude = parseFloat(this.responses.lng)
+        // this.withPopup = latLng(6.45407, 3.39467)
+        // console.log(this.withPopup)
+        let loadmap;
+       loadmap = leaflet.map('map').setView([51.505, -0.09], 13);
+      leaflet
+        .tileLayer(this.url, {
+          maxZoom: 19,
+          attribution:
+            this.attribution,
+        })
+        .addTo(loadmap);
+        
+        loadmap.setView([this.latitude, this.longitude], 13);
         this.loading = false;
+        var marker = leaflet.icon({
+            iconUrl: '/images/icon-location.svg',
+            // shadowUrl: 'leaf-shadow.png',
+
+            iconSize:     [30, 30], // size of the icon
+            // shadowSize:   [50, 64], // size of the shadow
+            iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+            // shadowAnchor: [4, 62],  // the same for the shadow
+            popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+        leaflet
+          .marker([this.latitude, this.longitude], {icon: marker})
+          .addTo(loadmap);
+        this.address = ''
       } catch(e){
-        this.responses = [];
+        // alert('error', e)
+        // this.responses = [];
         this.address = ''
         this.loading = false;
       }
@@ -124,6 +158,7 @@ export default {
   },
   beforeMount() {
      this.findIp();
+    //  this.addmap()
   },
 
  
